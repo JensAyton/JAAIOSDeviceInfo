@@ -1,0 +1,6 @@
+# System cruft
+.DS_Store
+
+# Xcode cruft
+xcuserdata/
+project.xcworkspace/
