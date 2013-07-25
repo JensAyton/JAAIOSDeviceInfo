@@ -45,7 +45,8 @@
 
 - (NSImage *)iconForDevice:(NSString *)deviceIdentifier color:(NSString *)color
 {
-    NSImage *image = [_iconCache objectForKey:deviceIdentifier];
+	NSString *cacheKey = color ? [NSString stringWithFormat:@"%@:%@", deviceIdentifier, color] : deviceIdentifier;
+    NSImage *image = [_iconCache objectForKey:cacheKey];
     if (image != nil)  return image;
 
     if ([self identifierIsSimulator:deviceIdentifier])
@@ -57,7 +58,11 @@
         image = [self iconForDeviceFromITunes:deviceIdentifier color:color];
     }
 
-    if (image != nil)  [_iconCache setObject:image forKey:deviceIdentifier];
+    if (image != nil)
+	{
+		if (_iconCache == nil)  _iconCache = [NSCache new];
+		[_iconCache setObject:image forKey:cacheKey];
+	}
     
     return image;
 }
