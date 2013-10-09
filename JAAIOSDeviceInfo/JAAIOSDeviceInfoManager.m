@@ -178,8 +178,8 @@
         [fileRefNums addObject:@(refNum)];
     }
 
-    NSImage *smallImage = [self loadPNGResource:4000 + resourceID.intValue];
-    NSImage *largeImage = [self loadPNGResource:19000 + resourceID.intValue];
+    NSImage *smallImage = [self loadPNGResource:4000 + resourceID.shortValue];
+    NSImage *largeImage = [self loadPNGResource:19000 + resourceID.shortValue];
 
     for (NSNumber *refNum in fileRefNums)
     {
