@@ -65,7 +65,9 @@
         [colorMenu addItem:[NSMenuItem separatorItem]];
         for (NSString *colorKey in colors)
         {
-            [colorMenu addItem:[self menuItemWithTitle:[colorKey capitalizedString] representedObject:colorKey]];
+			NSString *colorName = colorKey;
+			if (![colorName hasPrefix:@"#"])  colorName = [colorName capitalizedString];
+            [colorMenu addItem:[self menuItemWithTitle:colorName representedObject:colorKey]];
         }
         self.colorPopup.enabled = YES;
     }

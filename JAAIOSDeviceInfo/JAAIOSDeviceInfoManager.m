@@ -258,8 +258,12 @@
             @"iPhone3,2":  @{ @"name": @"iPhone 4 (Rev A)",        @"icon": @485, @"icon;white": @486 },    // The 8 GB budget model
             @"iPhone3,3":  @{ @"name": @"iPhone 4 (CDMA)",         @"icon": @502, @"icon;white": @503 },
             @"iPhone4,1":  @{ @"name": @"iPhone 4S",               @"icon": @506, @"icon;white": @507 },
-            @"iPhone5,1":  @{ @"name": @"iPhone 5 (GSM)",          @"icon": @528, @"icon;white": @529 },
-            @"iPhone5,2":  @{ @"name": @"iPhone 5 (CDMA)",         @"icon": @528, @"icon;white": @529 },
+            @"iPhone5,1":  @{ @"name": @"iPhone 5 (GSM)",          @"icon": @528, @"icon;white": @529, @"icon;3b3b3c": @528 },
+            @"iPhone5,2":  @{ @"name": @"iPhone 5 (CDMA)",         @"icon": @528, @"icon;white": @529, @"icon;3b3b3c": @528 },
+            @"iPhone5,3":  @{ @"name": @"iPhone 5c (GSM)",         @"icon": @547, @"icon;blue": @544, @"icon;green": @545, @"icon;pink": @546, @"icon;silver": @547, @"icon;yellow": @548 },
+            @"iPhone5,4":  @{ @"name": @"iPhone 5c (CDMA)",        @"icon": @547, @"icon;blue": @544, @"icon;green": @545, @"icon;pink": @546, @"icon;silver": @547, @"icon;yellow": @548 },
+            @"iPhone6,1":  @{ @"name": @"iPhone 5s (GSM)",         @"icon": @551, @"icon;white": @550, @"icon;silver": @550, @"icon;gold": @549, @"icon;#3b3b3c": @551 },
+            @"iPhone6,2":  @{ @"name": @"iPhone 5s (CDMA)",        @"icon": @551, @"icon;white": @550, @"icon;silver": @550, @"icon;gold": @549, @"icon;#3b3b3c": @551 },
 
             @"iPod1,1":    @{ @"name": @"iPod touch (Gen. 1)",     @"icon": @447 },
             @"iPod2,1":    @{ @"name": @"iPod touch (Gen. 2)",     @"icon": @464 },
@@ -286,7 +290,7 @@
             // AppleTV1,1 runs Mac OS X
             @"AppleTV2,1": @{ @"name": @"AppleTV (Gen. 2)",        @"icon": @501 },
             @"AppleTV3,1": @{ @"name": @"AppleTV (Gen. 3)",        @"icon": @501 },
-            @"AppleTV3,1": @{ @"name": @"AppleTV (Gen. 4, Rev A)", @"icon": @501 },
+            @"AppleTV3,2": @{ @"name": @"AppleTV (Gen. 3, Rev A)", @"icon": @501 },
         };
     }
 
