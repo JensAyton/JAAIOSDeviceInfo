@@ -286,7 +286,12 @@
             @"iPad3,4":    @{ @"name": @"iPad (Gen. 4, WiFi)",     @"icon": @504, @"icon;white": @505 },
             @"iPad3,5":    @{ @"name": @"iPad (Gen. 4, GSM)",      @"icon": @504, @"icon;white": @505 },
             @"iPad3,6":    @{ @"name": @"iPad (Gen. 4, CDMA)",     @"icon": @504, @"icon;white": @505 },
-
+            @"iPad4,1":    @{ @"name": @"iPad Air (WiFi)",         @"icon": @552, @"icon;white": @553, @"icon;#3b3b3c": @554 },
+            @"iPad4,2":    @{ @"name": @"iPad Air (GSM)",          @"icon": @552, @"icon;white": @553, @"icon;#3b3b3c": @554 },
+            @"iPad4,3":    @{ @"name": @"iPad Air (CDMA)",         @"icon": @552, @"icon;white": @553, @"icon;#3b3b3c": @554 },
+            @"iPad4,4":    @{ @"name": @"iPad mini (Gen. 2, WiFi)",@"icon": @556, @"icon;white": @557, @"icon;#3b3b3c": @558 },
+            @"iPad4,5":    @{ @"name": @"iPad mini (Gen. 2, GSM)", @"icon": @556, @"icon;white": @557, @"icon;#3b3b3c": @558 },
+            
             // AppleTV1,1 runs Mac OS X
             @"AppleTV2,1": @{ @"name": @"AppleTV (Gen. 2)",        @"icon": @501 },
             @"AppleTV3,1": @{ @"name": @"AppleTV (Gen. 3)",        @"icon": @501 },
