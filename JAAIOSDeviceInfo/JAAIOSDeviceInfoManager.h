@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A class which knows how to extract iOS device icons from iTunes using evil black magic. It can also provide
@@ -38,7 +39,7 @@
  *         iTunes not being installed, or the resource IDs used for the icons having changed; the latter could also
  *         result in the wrong image being returned.)
  */
-- (NSImage *)iconForDevice:(NSString *)deviceIdentifier color:(NSString *)color;
+- (nullable NSImage *)iconForDevice:(NSString *)deviceIdentifier color:(nullable NSString *)color;
 
 /**
  * Given a device identifier string (such as "iPhone2,1"), returns an icon for the device. The icons are retrieved from
@@ -51,18 +52,20 @@
  *         iTunes not being installed, or the resource IDs used for the icons having changed; the latter could also
  *         result in the wrong image being returned.)
  */
-- (NSImage *)iconForDevice:(NSString *)deviceIdentifier;
+- (nullable NSImage *)iconForDevice:(NSString *)deviceIdentifier;
 
 /**
  * Retrieve a list of supported colour values (as strings) for a device. The list may be empty.
  */
-- (NSArray *)knownColorsForDevice:(NSString *)deviceIdentifier;
+- (NSArray<NSString *> *)knownColorsForDevice:(NSString *)deviceIdentifier;
 
 /**
  * A list of the device identifiers JAAIOSDeviceManager knows about.
  * 
  * Not included: "i386" and "x86_64", which are the hw.machine values for the iOS Simulator.
  */
-@property (readonly, weak) NSArray *knownDevices;
+@property (readonly) NSArray<NSString *> *knownDevices;
 
 @end
+
+NS_ASSUME_NONNULL_END
