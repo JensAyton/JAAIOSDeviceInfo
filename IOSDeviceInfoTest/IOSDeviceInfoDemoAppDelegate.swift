@@ -56,8 +56,8 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 			return
 		}
 
-		let name = self.infoManager.name(forDevice: device.identifier)
-		self.deviceIdentifierField.objectValue = "\(name) (\(device.identifier))"
+		let shortName = self.infoManager.shortName(forDevice: device.identifier)
+		self.deviceIdentifierField.objectValue = "\(shortName) (\(device.identifier))"
 
 		self.rebuildColorMenu(forDevice: device)
 		self.update()

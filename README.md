@@ -1,12 +1,21 @@
 JAAIOSDeviceInfo
 ================
 
-Cocoa utility to retrieve iOS device icons from iTunes
+Cocoa utility to retrieve iOS/watchOS/tvOS device icons
 
-This is a class which allows you to map an iOS device model identifier, like "iPad2,4", to an icon. The icons are extracted from resource files in iTunes. Since the existence and organization of these files is undocumented, and the relationship between device identifiers and resources is hard-coded, this is pretty fragile, but it’s potentially mildly convenient for custom development and debugging tools that work with iOS devices.
+This is a class which allows you to map a device model identifier, like "iPad2,4", to an icon and a name. The icons and names are extracted from the macOS Uniform Type Identifier system. Since the existence of this data is undocumented, it is somewhat fragile, but it’s potentially mildly convenient for custom development and debugging tools that work with iOS devices.
+
+Usage example:
+```swift
+JAAIOSDeviceInfoManager().icon(forDevice:"iPhone7,2" color:"e1ccb5") // NSImage?
+```
+
+```objc
+[[JAAIOSDeviceInfoManager new] iconForDevice:@"iPhone7,2" color:@"e1ccb5"];
+```
 
 
-Copyright © 2013 Jens Ayton
+Copyright © 2013–2016 Jens Ayton
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

@@ -1,34 +1,40 @@
 #import "JAAIOSDeviceInfoManager.h"
-#import <Carbon/Carbon.h>
+#import <Cocoa/Cocoa.h>
+#import <CoreServices/CoreServices.h>
+
+
+static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap(void);
+
+
+@interface JAAIOSDeviceInfoManager ()
+
+@property (readonly) NSCache<NSString *, NSImage *> *iconCache;
+
+@end
 
 
 @implementation JAAIOSDeviceInfoManager
 {
-    NSDictionary        *_infoDictionary;
-    NSCache             *_iconCache;
-    dispatch_group_t    _findApplicationsWorkGroup;
-    NSArray             *_resourceFileURLs;
-    NSURL               *_simulatorURL;
+    dispatch_group_t	_findSimulatorWorkGroup;
+    NSURL				*_simulatorURL;
 }
 
-- (id)init
+- (instancetype)init
 {
-    if (!(self = [super init]))
-        return nil;
+	self = [super init];
 
-    /* Immediately start asynchronously searching for iTunes and listing its resources, and searching for iOS Simulator,
-     * since this can take an arbitrarily long time.
-     */
-    _findApplicationsWorkGroup = dispatch_group_create();
-    dispatch_group_async(_findApplicationsWorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self findITunes];
-    });
-    dispatch_group_async(_findApplicationsWorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self findIOSSimulator];
-    });
-    dispatch_group_notify(_findApplicationsWorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        _findApplicationsWorkGroup = nil;
-    });
+	if (self != nil) {
+		// Immediately start asynchronously searching for the iOS Simulator, since this can take an arbitrarily long time.
+		_findSimulatorWorkGroup = dispatch_group_create();
+		dispatch_group_async(_findSimulatorWorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			[self findIOSSimulator];
+		});
+		dispatch_group_notify(_findSimulatorWorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+			_findSimulatorWorkGroup = nil;
+		});
+
+		_iconCache = [NSCache new];
+	}
 
     return self;
 }
@@ -36,100 +42,115 @@
 
 - (NSString *)nameForDevice:(NSString *)deviceIdentifier
 {
-    NSString *result = self.infoDictionary[deviceIdentifier][@"name"];
-    if (result == nil && [self identifierIsSimulator:deviceIdentifier])  result = @"iOS Simulator";
+	NSString *result = NameMap()[deviceIdentifier][@"long"];
+	if (result == nil) {
+		NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:nil];
+		if (UTI != nil) {
+			result = CFBridgingRelease(UTTypeCopyDescription((__bridge CFStringRef)UTI));
+		}
+	}
+    if (result == nil && [self identifierIsSimulator:deviceIdentifier])  result = @"Simulator";
     if (result == nil)  result = deviceIdentifier;
     return result;
 }
 
 
-- (NSImage *)iconForDevice:(NSString *)deviceIdentifier color:(NSString *)color
+- (NSString *)shortNameForDevice:(NSString *)deviceIdentifier
 {
-	NSString *cacheKey = color ? [NSString stringWithFormat:@"%@:%@", deviceIdentifier, color] : deviceIdentifier;
-    NSImage *image = [_iconCache objectForKey:cacheKey];
-    if (image != nil)  return image;
+	NSString *result = NameMap()[deviceIdentifier][@"short"];
+	if (result == nil) {
+		/* Derive a short name from the long name.
+		   Currently, this just strips trailing parenthesised phrases - usually a list of model numbers.
+		   There are cases with multiple parenthesized phrases, like "iPad Pro (12.9-inch) (Model A1584)". In this case,
+		   stripping only the last set of parentheses is correct.
+		 */
+		static NSRegularExpression *regexp;
+		static dispatch_once_t onceToken;
+		dispatch_once(&onceToken, ^{
+			regexp = [NSRegularExpression regularExpressionWithPattern:@"(.*) \\(.*\\)" options:0 error:nil];
+		});
 
-    if ([self identifierIsSimulator:deviceIdentifier])
-    {
-        image = [self iconForSimulator];
-    }
-    else
-    {
-        image = [self iconForDeviceFromITunes:deviceIdentifier color:color];
-    }
-
-    if (image != nil)
-	{
-		if (_iconCache == nil)  _iconCache = [NSCache new];
-		[_iconCache setObject:image forKey:cacheKey];
+		NSString *longName = [self nameForDevice:deviceIdentifier];
+		NSArray<NSTextCheckingResult *> *matches = [regexp matchesInString:longName options:0 range:(NSRange){ 0, longName.length }];
+		if (matches.count > 0) {
+			result = [longName substringWithRange:[matches[0] rangeAtIndex:1]];
+		} else {
+			result = longName;
+		}
 	}
-    
-    return image;
+	return result;
 }
 
 
-- (NSArray *)knownDevices
+- (NSImage *)iconForDevice:(NSString *)deviceIdentifier color:(NSString *)colorCode
 {
-    return [self.infoDictionary.allKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-}
+	if (deviceIdentifier == nil)  return nil;
+	if (colorCode.length == 0)  colorCode = nil;
 
+	NSString *cacheKey = [NSString stringWithFormat:@"%@:%@", deviceIdentifier, colorCode];
+	NSImage *image = [self.iconCache objectForKey:cacheKey];
+	if (image == nil)
+	{
+		image = [self lookupIconForDevice:deviceIdentifier color:colorCode];
+		if (image != nil)  [self.iconCache setObject:image forKey:cacheKey];
+	}
 
-- (NSArray *)knownColorsForDevice:(NSString *)deviceIdentifier
-{
-    NSMutableArray *result = [NSMutableArray new];
-
-    for (NSString *key in self.infoDictionary[deviceIdentifier])
-    {
-        if ([key hasPrefix:@"icon;"])
-        {
-            NSString *colorKey = [key substringFromIndex:5];
-            [result addObject:colorKey];
-        }
-    }
-
-    return [result sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+	return image;
 }
 
 
 #pragma mark - Internal
 
-- (void)findITunes
+- (NSImage *)lookupIconForDevice:(NSString *)deviceIdentifier color:(NSString *)colorCode
 {
-    // NOTE: -[NSWorkspace URLForApplicationWithBundleIdentifier:] isn't documented as being thread safe, although
-    // it probably just calls LSFindApplicationForInfo(), which is.
-    CFURLRef cfITunesURL;
-    LSFindApplicationForInfo('hook', CFSTR("com.apple.iTunes"), NULL, NULL, &cfITunesURL);
-    if (cfITunesURL != NULL)
-    {
-        [self findResourceFilesInITunes:(__bridge NSURL *)cfITunesURL];
-        CFRelease(cfITunesURL);
-    }
+	NSParameterAssert(deviceIdentifier != nil);
+
+	if ([self identifierIsSimulator:deviceIdentifier])  return self.iconForSimulator;
+
+	NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:colorCode];
+	return [NSWorkspace.sharedWorkspace iconForFileType:UTI];
 }
 
 
-- (void)findResourceFilesInITunes:(NSURL *)iTunesURL
+- (NSString *)selectUTIForDevice:(NSString *)deviceIdentifier color:(NSString *)colorCode
 {
-    _resourceFileURLs = [NSBundle URLsForResourcesWithExtension:@"rsrc" subdirectory:nil inBundleWithURL:iTunesURL];
+	NSParameterAssert(deviceIdentifier != nil);
+
+	CFStringRef deviceIdentifierCF = (__bridge CFStringRef)deviceIdentifier;
+
+	if (colorCode.length > 0) {
+		if ([colorCode hasPrefix:@"#"])  colorCode = [colorCode substringFromIndex:1];
+		NSString *colorSuffix = [@"-" stringByAppendingString:colorCode];
+
+		CFArrayRef allIdentifiers = UTTypeCreateAllIdentifiersForTag(CFSTR("com.apple.device-model-code"),
+		                                                             deviceIdentifierCF,
+		                                                             CFSTR("public.device"));
+		CFAutorelease(allIdentifiers);
+
+		for (NSString *identifier in (__bridge NSArray *)allIdentifiers) {
+			if ([identifier hasSuffix:colorSuffix])  return identifier;
+		}
+	}
+
+	CFStringRef result = UTTypeCreatePreferredIdentifierForTag(CFSTR("com.apple.device-model-code"),
+	                                                           deviceIdentifierCF, nil);
+	return CFBridgingRelease(result);
+}
+
+
+- (NSArray<NSString *> *)allUTIsForDeviceIdentifier:(NSString *)deviceIdentifier
+{
+	CFStringRef deviceIdentifierCF = (__bridge CFStringRef)deviceIdentifier;
+	CFArrayRef allIdentifiers = UTTypeCreateAllIdentifiersForTag(CFSTR("com.apple.device-model-code"),
+	                                                             deviceIdentifierCF,
+	                                                             CFSTR("public.device"));
+	return CFBridgingRelease(allIdentifiers);
 }
 
 
 - (void)findIOSSimulator
 {
-    // As above.
-    CFURLRef cfSimulatorURL;
-    LSFindApplicationForInfo(kLSUnknownCreator, CFSTR("com.apple.iphonesimulator"), NULL, NULL, &cfSimulatorURL);
-    _simulatorURL = CFBridgingRelease(cfSimulatorURL);
-}
-
-
-- (void)waitToFindITunes
-{
-    if (_findApplicationsWorkGroup)
-    {
-        // Wait for iTunes search to complete, but at most one second.
-        dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
-        dispatch_group_wait(_findApplicationsWorkGroup, timeout);
-    }
+	_simulatorURL = [[NSWorkspace sharedWorkspace] URLForApplicationWithBundleIdentifier:@"com.apple.iphonesimulator"];
 }
 
 
@@ -140,166 +161,62 @@
 }
 
 
-// The resource manager is deprecated, but there is no system-provided substitute.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
-
-- (NSImage *)iconForDeviceFromITunes:(NSString *)deviceIdentifier color:(NSString *)color
+- (void)waitToFindSimulator
 {
-    [self waitToFindITunes];
-    if (_resourceFileURLs == nil)  return nil;
-
-    NSNumber *resourceID;
-    if (color != nil)
-    {
-        resourceID = self.infoDictionary[deviceIdentifier][[NSString stringWithFormat:@"icon;%@", color]];
-    }
-    if (resourceID == nil)
-    {
-        resourceID = self.infoDictionary[deviceIdentifier][@"icon"];
-    }
-    if (resourceID == nil)
-    {
-        return nil;
-    }
-
-    // Load all of iTunes's resource files.
-    NSMutableArray *fileRefNums = [NSMutableArray new];
-    for (NSURL *url in _resourceFileURLs)
-    {
-        FSRef fsRef;
-        bool OK = CFURLGetFSRef((__bridge CFURLRef)url, &fsRef);
-        if (!OK)  continue;
-
-        ResFileRefNum refNum;
-        OSStatus status = FSOpenResourceFile(&fsRef, 0, NULL, fsRdPerm, &refNum);
-        if (status != noErr)  continue;
-
-        [fileRefNums addObject:@(refNum)];
-    }
-
-    NSImage *smallImage = [self loadPNGResource:4000 + resourceID.shortValue];
-    NSImage *largeImage = [self loadPNGResource:19000 + resourceID.shortValue];
-
-    for (NSNumber *refNum in fileRefNums)
-    {
-        CloseResFile(refNum.intValue);
-    }
-
-    if (largeImage == nil)  return smallImage;
-    // Combine the two images into one multi-representation image.
-    if (smallImage)  [largeImage addRepresentations:smallImage.representations];
-    return largeImage;
+	if (_findSimulatorWorkGroup)
+	{
+		// Wait for Simulator search to complete, but at most one second.
+		dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+		dispatch_group_wait(_findSimulatorWorkGroup, timeout);
+	}
 }
-
-
-- (NSImage *)loadPNGResource:(ResID)resourceID
-{
-    Handle resource = GetResource('PNG ', resourceID);
-    if (resource == NULL)  return nil;
-
-    // Hay guise, did you know we don't need to call HLock() on Mac OS X? Groovy!
-    NSData *data = [NSData dataWithBytes:*resource length:GetHandleSize(resource)];
-    NSImage *result = [[NSImage alloc] initWithData:data];
-
-    ReleaseResource(resource);
-    return result;
-}
-
-#pragma clang diagnostic pop
 
 
 - (NSImage *)iconForSimulator
 {
+	[self waitToFindSimulator];
+
     if (_simulatorURL)
     {
         NSImage *icon = [NSWorkspace.sharedWorkspace iconForFile:_simulatorURL.path];
         if (icon)  return icon;
     }
 
-    // Oddly, "com.apple.application" and "app" don't work here.
+    // Generic app icon. Oddly, "com.apple.application" and "app" don't work here.
     return [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode('APPL')];
 }
 
-
-- (NSImage *)iconForDevice:(NSString *)deviceIdentifier
-{
-    return [self iconForDevice:deviceIdentifier color:nil];
-}
-
-
-- (NSDictionary *)infoDictionary
-{
-    /*
-     * NOTE TO TINKERERS: these icon IDs are correct as of iTunes 11.0.4.
-     *
-     * There are four sets of icons embedded in resource files in iTunes:
-     * * 'icns' resources starting at ID 4300
-     * * 'PNG ' resources starting at 4400
-     * * Larger 'PNG ' resources starting at 19400
-     *
-     * The two sets of PNGs seem to match up, i.e. 19506 is a bigger version of 4506. The icns resources do not contain
-     * all iOS models and have a different numbering sequence. The table below holds the low three digits of each 'PNG '
-     * resource.
-     *
-     * The table contains icon IDs for different device colours. However, I don't know of a useful way to get this
-     * information. The Intertubes seem to think it's encoded in device serial numbers, in ways that vary by device
-     * type. For iPhones and iPads, the "icon" key is always the black version. For the fifth generation iPod touch,
-     * the "icon" key gives the "silver" version.
-     */
-
-    if (_infoDictionary == nil)
-    {
-        _infoDictionary = @{
-            @"iPhone1,1":  @{ @"name": @"iPhone 1",                @"icon": @446 },
-            @"iPhone1,2":  @{ @"name": @"iPhone 3G",               @"icon": @449 /* 448: 3G lock screen, 449: 3G springboard */ },
-            @"iPhone2,1":  @{ @"name": @"iPhone 3GS",              @"icon": @481 },
-            @"iPhone3,1":  @{ @"name": @"iPhone 4",                @"icon": @485, @"icon;white": @486 },
-            @"iPhone3,2":  @{ @"name": @"iPhone 4 (Rev A)",        @"icon": @485, @"icon;white": @486 },    // The 8 GB budget model
-            @"iPhone3,3":  @{ @"name": @"iPhone 4 (CDMA)",         @"icon": @502, @"icon;white": @503 },
-            @"iPhone4,1":  @{ @"name": @"iPhone 4S",               @"icon": @506, @"icon;white": @507 },
-            @"iPhone5,1":  @{ @"name": @"iPhone 5 (GSM)",          @"icon": @528, @"icon;white": @529, @"icon;3b3b3c": @528 },
-            @"iPhone5,2":  @{ @"name": @"iPhone 5 (CDMA)",         @"icon": @528, @"icon;white": @529, @"icon;3b3b3c": @528 },
-            @"iPhone5,3":  @{ @"name": @"iPhone 5c (GSM)",         @"icon": @547, @"icon;blue": @544, @"icon;green": @545, @"icon;pink": @546, @"icon;silver": @547, @"icon;yellow": @548 },
-            @"iPhone5,4":  @{ @"name": @"iPhone 5c (CDMA)",        @"icon": @547, @"icon;blue": @544, @"icon;green": @545, @"icon;pink": @546, @"icon;silver": @547, @"icon;yellow": @548 },
-            @"iPhone6,1":  @{ @"name": @"iPhone 5s (GSM)",         @"icon": @551, @"icon;white": @550, @"icon;silver": @550, @"icon;gold": @549, @"icon;#3b3b3c": @551 },
-            @"iPhone6,2":  @{ @"name": @"iPhone 5s (CDMA)",        @"icon": @551, @"icon;white": @550, @"icon;silver": @550, @"icon;gold": @549, @"icon;#3b3b3c": @551 },
-
-            @"iPod1,1":    @{ @"name": @"iPod touch (Gen. 1)",     @"icon": @447 },
-            @"iPod2,1":    @{ @"name": @"iPod touch (Gen. 2)",     @"icon": @464 },
-            @"iPod3,1":    @{ @"name": @"iPod touch (Gen. 3)",     @"icon": @483 /* Same as G2 except it has wallpaper */ },
-            @"iPod4,1":    @{ @"name": @"iPod touch (Gen. 4)",     @"icon": @499, @"icon;white": @500 },
-            @"iPod5,1":    @{ @"name": @"iPod touch (Gen. 5)",     @"icon": @530, @"icon;silver": @530, @"icon;pink": @531, @"icon;yellow": @532, @"icon;blue": @533, @"icon;slate": @534, @"icon;red": @535, @"icon;white": @530, @"icon;black": @534 },
-
-            @"iPad1,1":    @{ @"name": @"iPad (Gen. 1, WiFi)",     @"icon": @484 },
-            @"iPad1,2":    @{ @"name": @"iPad (Gen. 1, GSM)",      @"icon": @484 },
-            @"iPad2,1":    @{ @"name": @"iPad 2 (WiFi)",           @"icon": @504, @"icon;white": @505 },
-            @"iPad2,2":    @{ @"name": @"iPad 2 (GSM)",            @"icon": @508, @"icon;white": @509 /* 504/505, 508/509 and 510/511 are identical pairs; how they relate to models is anyone's guess. */ },
-            @"iPad2,3":    @{ @"name": @"iPad 2 (CDMA)",           @"icon": @510, @"icon;white": @511 },
-            @"iPad2,4":    @{ @"name": @"iPad 2 (Rev A, WiFi)",    @"icon": @510, @"icon;white": @511 }, // Budget model with 32nm chip and better battry life
-            @"iPad2,5":    @{ @"name": @"iPad mini (Gen. 1, WiFi)",@"icon": @536, @"icon;white": @537 },
-            @"iPad2,6":    @{ @"name": @"iPad mini (Gen. 1, GSM)", @"icon": @538, @"icon;white": @539 },
-            @"iPad2,7":    @{ @"name": @"iPad mini (Gen. 1, CDMA)",@"icon": @538, @"icon;white": @539 },
-            @"iPad3,1":    @{ @"name": @"iPad (Gen. 3, WiFi)",     @"icon": @504, @"icon;white": @505 },
-            @"iPad3,2":    @{ @"name": @"iPad (Gen. 3, CDMA)",     @"icon": @504, @"icon;white": @505 },
-            @"iPad3,3":    @{ @"name": @"iPad (Gen. 3, GSM)",      @"icon": @504, @"icon;white": @505 },
-            @"iPad3,4":    @{ @"name": @"iPad (Gen. 4, WiFi)",     @"icon": @504, @"icon;white": @505 },
-            @"iPad3,5":    @{ @"name": @"iPad (Gen. 4, GSM)",      @"icon": @504, @"icon;white": @505 },
-            @"iPad3,6":    @{ @"name": @"iPad (Gen. 4, CDMA)",     @"icon": @504, @"icon;white": @505 },
-            @"iPad4,1":    @{ @"name": @"iPad Air (WiFi)",         @"icon": @552, @"icon;white": @553, @"icon;#3b3b3c": @554 },
-            @"iPad4,2":    @{ @"name": @"iPad Air (GSM)",          @"icon": @552, @"icon;white": @553, @"icon;#3b3b3c": @554 },
-            @"iPad4,3":    @{ @"name": @"iPad Air (CDMA)",         @"icon": @552, @"icon;white": @553, @"icon;#3b3b3c": @554 },
-            @"iPad4,4":    @{ @"name": @"iPad mini (Gen. 2, WiFi)",@"icon": @556, @"icon;white": @557, @"icon;#3b3b3c": @558 },
-            @"iPad4,5":    @{ @"name": @"iPad mini (Gen. 2, GSM)", @"icon": @556, @"icon;white": @557, @"icon;#3b3b3c": @558 },
-            
-            // AppleTV1,1 runs Mac OS X
-            @"AppleTV2,1": @{ @"name": @"AppleTV (Gen. 2)",        @"icon": @501 },
-            @"AppleTV3,1": @{ @"name": @"AppleTV (Gen. 3)",        @"icon": @501 },
-            @"AppleTV3,2": @{ @"name": @"AppleTV (Gen. 3, Rev A)", @"icon": @501 },
-        };
-    }
-
-    return _infoDictionary;
-}
-
 @end
+
+
+static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap(void)
+{
+	static NSDictionary *nameMap;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		// Note: system-provided names aren't localized either
+		nameMap = @{
+			@"iPod1,1": @{ @"long": @"iPod touch (1st generation)", @"short": @"iPod touch (1st generation)" },
+			@"iPod2,1": @{ @"long": @"iPod touch (2nd generation)", @"short": @"iPod touch (2nd generation)" },
+			@"iPod3,1": @{ @"long": @"iPod touch (3rd generation)", @"short": @"iPod touch (3rd generation)" },
+			@"iPod4,1": @{ @"long": @"iPod touch (4th generation)", @"short": @"iPod touch (4th generation)" },
+			// 5th and 6th have full long names by default
+			@"iPod5,1": @{ @"short": @"iPod touch (5th generation)" },
+			@"iPod7,1": @{ @"short": @"iPod touch (6th generation)" },
+
+			// iPad 3 was confusingly just named "iPad"
+			@"iPad3,2": @{ @"long": @"iPad 3 Wi-Fi + 4G (LTE/CDMA)" },
+			@"iPad3,3": @{ @"long": @"iPad 3 Wi-Fi + 4G (LTE/GSM)" },
+
+			// iPad 4 has "4th generation" in parentheses, unlike other iPads
+			@"iPad3,4": @{ @"short": @"iPad 4" },
+			@"iPad3,5": @{ @"short": @"iPad 4" },
+			@"iPad3,6": @{ @"short": @"iPad 4" },
+
+			// Gen 2 and 3 have explicit (nth generation), gen 4 doesn't by default
+			@"AppleTV5,3": @{ @"long": @"Apple TV (4th generation)" },
+		};
+	});
+
+	return nameMap;
+}

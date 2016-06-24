@@ -29,7 +29,7 @@
 		2D5CF10317A051B30044E4A4 /* IOSDeviceInfoTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IOSDeviceInfoTest-Prefix.pch"; sourceTree = "<group>"; };
 		2D5CF10B17A051B30044E4A4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		2D5CF11417A051EC0044E4A4 /* JAAIOSDeviceInfoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JAAIOSDeviceInfoManager.h; sourceTree = "<group>"; };
-		2D5CF11517A051EC0044E4A4 /* JAAIOSDeviceInfoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JAAIOSDeviceInfoManager.m; sourceTree = "<group>"; };
+		2D5CF11517A051EC0044E4A4 /* JAAIOSDeviceInfoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JAAIOSDeviceInfoManager.m; sourceTree = "<group>"; usesTabs = 1; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +53,7 @@
 				2D5CF0F317A051B30044E4A4 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		2D5CF0F317A051B30044E4A4 /* Products */ = {
 			isa = PBXGroup;
