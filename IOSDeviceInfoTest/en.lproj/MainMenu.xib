@@ -650,7 +650,7 @@
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="480" height="360"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1366" height="768"/>
             <value key="minSize" type="size" width="200" height="100"/>
             <view key="contentView" id="372">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
@@ -678,7 +678,7 @@
                         </constraints>
                     </customView>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="594">
-                        <rect key="frame" x="70" y="316" width="393" height="26"/>
+                        <rect key="frame" x="70" y="316" width="309" height="26"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="595">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -718,13 +718,22 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="tbS-j9-va7">
+                        <rect key="frame" x="382" y="322" width="80" height="18"/>
+                        <buttonCell key="cell" type="check" title="Simulator" bezelStyle="regularSquare" imagePosition="left" inset="2" id="mQL-GD-ee0">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="simulatorCheckboxSelectedWithSender:" target="494" id="fWI-Yu-afR"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="548" secondAttribute="trailing" constant="20" symbolic="YES" id="563"/>
                     <constraint firstItem="548" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="565"/>
                     <constraint firstAttribute="bottom" secondItem="548" secondAttribute="bottom" constant="20" symbolic="YES" id="571"/>
                     <constraint firstItem="594" firstAttribute="top" secondItem="372" secondAttribute="top" constant="20" symbolic="YES" id="600"/>
-                    <constraint firstAttribute="trailing" secondItem="594" secondAttribute="trailing" constant="20" symbolic="YES" id="603"/>
                     <constraint firstItem="613" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="617"/>
                     <constraint firstItem="594" firstAttribute="baseline" secondItem="613" secondAttribute="baseline" id="619"/>
                     <constraint firstAttribute="trailing" secondItem="634" secondAttribute="trailing" constant="20" symbolic="YES" id="647"/>
@@ -742,6 +751,11 @@
                     <constraint firstItem="548" firstAttribute="top" secondItem="663" secondAttribute="bottom" constant="8" symbolic="YES" id="680"/>
                     <constraint firstItem="634" firstAttribute="top" secondItem="594" secondAttribute="bottom" constant="10" symbolic="YES" id="684"/>
                     <constraint firstItem="634" firstAttribute="baseline" secondItem="635" secondAttribute="baseline" id="687"/>
+                    <constraint firstItem="634" firstAttribute="width" secondItem="594" secondAttribute="width" priority="500" id="0Bu-Du-fAq"/>
+                    <constraint firstAttribute="trailing" secondItem="tbS-j9-va7" secondAttribute="trailing" constant="20" id="0WK-eT-iPv"/>
+                    <constraint firstItem="tbS-j9-va7" firstAttribute="leading" secondItem="594" secondAttribute="trailing" constant="8" id="EBk-do-toe"/>
+                    <constraint firstItem="tbS-j9-va7" firstAttribute="baseline" secondItem="594" secondAttribute="baseline" id="oBN-pS-WWH"/>
+                    <constraint firstItem="634" firstAttribute="leading" secondItem="594" secondAttribute="leading" id="znk-2E-6gE"/>
                 </constraints>
             </view>
         </window>

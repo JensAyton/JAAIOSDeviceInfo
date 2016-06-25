@@ -28,6 +28,7 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 	@IBOutlet var iconImageView: NSImageView!
 
 	private let infoManager = JAAIOSDeviceInfoManager()
+	private var useSimulatorIdentifier = false
 
 	func applicationDidFinishLaunching(_: Notification) {
 		let deviceMenu = NSMenu()
@@ -56,9 +57,6 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 			return
 		}
 
-		let shortName = self.infoManager.shortName(forDevice: device.identifier)
-		self.deviceIdentifierField.objectValue = "\(shortName) (\(device.identifier))"
-
 		self.rebuildColorMenu(forDevice: device)
 		self.update()
 	}
@@ -84,11 +82,23 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 		self.update()
 	}
 
+	@IBAction func simulatorCheckboxSelected(sender: NSButton!) {
+		self.useSimulatorIdentifier = sender.state == 1;
+		self.update()
+	}
+
 	private func update() {
 		guard let device = self.devicePopup.selectedItem?.representedObject as? DeviceDescription else { return }
+		var deviceIdentifier = device.identifier
+		if self.useSimulatorIdentifier {
+			deviceIdentifier = "\(deviceIdentifier);Simulator"
+		}
 		let color = self.colorPopup.selectedItem?.representedObject as? String
 
-		self.iconImageView.objectValue = self.infoManager.icon(forDevice: device.identifier, color: color)
+		self.iconImageView.objectValue = self.infoManager.icon(forDevice: deviceIdentifier, color: color)
+
+		let shortName = self.infoManager.shortName(forDevice: deviceIdentifier)
+		self.deviceIdentifierField.objectValue = "\(shortName) (\(deviceIdentifier))"
 	}
 }
 

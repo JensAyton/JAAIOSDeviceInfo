@@ -13,6 +13,9 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 @end
 
 
+static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalizedIdentifier, BOOL *isSimulator);
+
+
 @implementation JAAIOSDeviceInfoManager
 {
     dispatch_group_t	_findSimulatorWorkGroup;
@@ -42,6 +45,7 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 
 - (NSString *)nameForDevice:(NSString *)deviceIdentifier
 {
+	NormalizeIdentifier(deviceIdentifier, &deviceIdentifier, nil);
 	NSString *result = NameMap()[deviceIdentifier][@"long"];
 	if (result == nil) {
 		NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:nil];
@@ -49,7 +53,7 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 			result = CFBridgingRelease(UTTypeCopyDescription((__bridge CFStringRef)UTI));
 		}
 	}
-    if (result == nil && [self identifierIsSimulator:deviceIdentifier])  result = @"Simulator";
+    if (result == nil && [self identifierIsUnspecificSimulator:deviceIdentifier])  result = @"Simulator";
     if (result == nil)  result = deviceIdentifier;
     return result;
 }
@@ -57,6 +61,7 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 
 - (NSString *)shortNameForDevice:(NSString *)deviceIdentifier
 {
+	NormalizeIdentifier(deviceIdentifier, &deviceIdentifier, nil);
 	NSString *result = NameMap()[deviceIdentifier][@"short"];
 	if (result == nil) {
 		/* Derive a short name from the long name.
@@ -94,6 +99,10 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 	}
 
 	NSString *cacheKey = [NSString stringWithFormat:@"%@:%@", deviceIdentifier, colorCode];
+
+	BOOL isSimulator;
+	NormalizeIdentifier(deviceIdentifier, &deviceIdentifier, &isSimulator);
+
 	NSImage *image = [self.iconCache objectForKey:cacheKey];
 	if (image == nil)
 	{
@@ -111,7 +120,7 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 {
 	NSParameterAssert(deviceIdentifier != nil);
 
-	if ([self identifierIsSimulator:deviceIdentifier])  return self.iconForSimulator;
+	if ([self identifierIsUnspecificSimulator:deviceIdentifier])  return self.iconForSimulator;
 
 	NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:colorCode];
 	return [NSWorkspace.sharedWorkspace iconForFileType:UTI];
@@ -160,7 +169,7 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 }
 
 
-- (bool)identifierIsSimulator:(NSString *)deviceIdentifier
+- (bool)identifierIsUnspecificSimulator:(NSString *)deviceIdentifier
 {
     /*
 	 * In the simulator, uname/sysctl hw.machine returns the host Mac's value,
@@ -231,4 +240,25 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 	});
 
 	return nameMap;
+}
+
+
+static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalizedIdentifier, BOOL *isSimulator)
+{
+#define SimulatorSuffix "Simulator"
+	BOOL hasSuffix = [deviceIdentifier hasSuffix:@SimulatorSuffix];
+	if (hasSuffix) {
+		deviceIdentifier = [deviceIdentifier substringToIndex:deviceIdentifier.length - strlen(SimulatorSuffix)];
+		if ([deviceIdentifier hasSuffix:@";"] || [deviceIdentifier hasSuffix:@" "]) {
+			deviceIdentifier = [deviceIdentifier substringToIndex:deviceIdentifier.length - 1];
+		}
+	}
+
+	if (normalizedIdentifier != nil) {
+		*normalizedIdentifier = deviceIdentifier;
+	}
+
+	if (isSimulator != nil) {
+		*isSimulator = hasSuffix;
+	}
 }
