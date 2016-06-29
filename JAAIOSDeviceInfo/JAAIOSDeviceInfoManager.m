@@ -143,8 +143,8 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 
 	return [NSImage imageWithSize:baseIcon.size flipped:NO drawingHandler:^(NSRect rect) {
 		[baseIcon drawInRect:rect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
-		NSRect badgeRect = { .origin = { rect.origin.x + rect.size.width / 20, rect.origin.y + rect.size.height / 20 },
-							 .size = { rect.size.width / 2.5, rect.size.height / 2.5 }};
+		NSRect badgeRect = { .origin = { rect.origin.x + rect.size.width / 16, rect.origin.y + rect.size.height / 16 },
+							 .size = { rect.size.width / 2, rect.size.height / 2 }};
 		[simulatorIcon drawInRect:badgeRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
 		return YES;
 	}];
