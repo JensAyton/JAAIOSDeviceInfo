@@ -45,7 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
  * details stripped out (in most cases algorithmically).
  *
  * @param deviceIdentifier An Apple model identifer, such as iPod5,1. This can
- *        be retrieved on device using sysctlbyname("hw.machine", ...).
+ *        be retrieved on device using sysctlbyname("hw.machine", ...) or
+ *        uname().
  * @return A short name for the device. If the device is unknown, the
  *         deviceIdentifier parameter is returned.
  *         (Failure can be detected using pointer equality.)
@@ -57,8 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
  * the device.
  *
  * @param deviceIdentifier An Apple model identifer, such as iPod5,1. This can
- *        be retrieved on device using sysctlbyname("hw.machine", ...).
+ *        be retrieved on device using sysctlbyname("hw.machine", ...) or
+ *        uname().
  * @param color An optional colour identifier, such as "black" or "white".
+ *        This can be retrieved with the private UIDevice method
+ *        _deviceInfoForKey:@"DeviceColor".
  * @return An image, if one could be found.
  */
 - (nullable NSImage *)iconForDevice:(NSString *)deviceIdentifier

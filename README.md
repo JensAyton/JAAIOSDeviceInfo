@@ -3,7 +3,7 @@ JAAIOSDeviceInfo
 
 Cocoa utility to retrieve iOS/watchOS/tvOS device icons
 
-This is a class which allows you to map a device model identifier, like "iPad2,4", to an icon and a name. The icons and names are extracted from the macOS Uniform Type Identifier system. Since the existence of this data is undocumented, it is somewhat fragile, but it’s potentially mildly convenient for custom development and debugging tools that work with iOS devices.
+This is a class which allows you to map a device model identifier, like "iPad2,4", and optionally a device color code, to an icon and a name. The icons and names are extracted from the macOS Uniform Type Identifier system. Since the existence of this data is undocumented, it is somewhat fragile, but it’s potentially mildly convenient for custom development and debugging tools that work with iOS devices.
 
 Usage example:
 ```swift
@@ -13,6 +13,8 @@ JAAIOSDeviceInfoManager().icon(forDevice:"iPhone7,2" color:"e1ccb5") // NSImage?
 ```objc
 [[JAAIOSDeviceInfoManager new] iconForDevice:@"iPhone7,2" color:@"e1ccb5"];
 ```
+
+Also provided is UIDevice+JAAExtendedDeviceInfo, a category for extracting model identifiers and color codes on device. This has only been tested on iOS.
 
 
 Copyright © 2013–2016 Jens Ayton

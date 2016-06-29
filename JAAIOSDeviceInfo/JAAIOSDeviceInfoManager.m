@@ -162,8 +162,14 @@ static NSDictionary<NSString *, NSDictionary<NSString *, NSString *> *> *NameMap
 
 - (bool)identifierIsSimulator:(NSString *)deviceIdentifier
 {
-    // In the simulator, sysctl hw.machine returns the Mac's value, which is the processor type.
-    return [deviceIdentifier isEqualToString:@"x86_64"] || [deviceIdentifier isEqualToString:@"i386"];
+    /*
+	 * In the simulator, uname/sysctl hw.machine returns the host Mac's value,
+	 * which is the processor type. UIDevice+JAAExtendedDeviceInfo will give
+	 * "Simulator" if the environment variable path fails.
+	 */
+    return [deviceIdentifier isEqualToString:@"x86_64"] ||
+	       [deviceIdentifier isEqualToString:@"i386"] ||
+           [deviceIdentifier isEqualToString:@"Simulator"];
 }
 
 
