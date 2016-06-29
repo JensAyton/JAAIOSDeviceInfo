@@ -93,7 +93,7 @@
 				2D5CF10A17A051B30044E4A4 /* MainMenu.xib */,
 				2D5CF0FC17A051B30044E4A4 /* Supporting Files */,
 			);
-			path = IOSDeviceInfoTest;
+			name = IOSDeviceInfoTest;
 			sourceTree = "<group>";
 		};
 		2D5CF0FC17A051B30044E4A4 /* Supporting Files */ = {
@@ -114,7 +114,7 @@
 				2D5CF11517A051EC0044E4A4 /* JAAIOSDeviceInfoManager.m */,
 			);
 			name = JAAIOSDeviceInfoManager;
-			path = JAAIOSDeviceInfo;
+			path = ../JAAIOSDeviceInfo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,15 +292,13 @@
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "IOSDeviceInfoTest/IOSDeviceInfoTest-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "IOSDeviceInfoTest/IOSDeviceInfoTest-Info.plist";
+				INFOPLIST_FILE = "IOSDeviceInfoTest-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "se.ayton.jens.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "IOSDeviceInfoTest/IOSDeviceInfoTest-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "IOSDeviceInfoTest-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				WARNING_CFLAGS = "-Wall";
@@ -315,15 +313,13 @@
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "IOSDeviceInfoTest/IOSDeviceInfoTest-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "IOSDeviceInfoTest/IOSDeviceInfoTest-Info.plist";
+				INFOPLIST_FILE = "IOSDeviceInfoTest-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "se.ayton.jens.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "IOSDeviceInfoTest/IOSDeviceInfoTest-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "IOSDeviceInfoTest-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				WARNING_CFLAGS = "-Wall";
