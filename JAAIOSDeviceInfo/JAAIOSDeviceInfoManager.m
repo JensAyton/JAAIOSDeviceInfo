@@ -126,6 +126,7 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 	if ([self identifierIsUnspecificSimulator:deviceIdentifier])  return self.iconForSimulator;
 
 	NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:colorCode];
+	if (UTI == nil)  return nil;
 	return [NSWorkspace.sharedWorkspace iconForFileType:UTI];
 }
 
@@ -133,6 +134,7 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 - (NSImage *)badgeIconWithSimulatorIcon:(NSImage *)baseIcon
 {
 	NSImage *simulatorIcon = [self iconForSimulator];
+	if (baseIcon == nil)  return simulatorIcon;
 
 	return [NSImage imageWithSize:baseIcon.size flipped:NO drawingHandler:^(NSRect rect) {
 		[baseIcon drawInRect:rect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
@@ -166,7 +168,12 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 
 	CFStringRef result = UTTypeCreatePreferredIdentifierForTag(CFSTR("com.apple.device-model-code"),
 	                                                           deviceIdentifierCF, nil);
-	return CFBridgingRelease(result);
+	if (UTTypeIsDynamic(result)) {
+		CFRelease(result);
+		return nil;
+	} else {
+		return CFBridgingRelease(result);
+	}
 }
 
 

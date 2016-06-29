@@ -42,6 +42,11 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 			}
 		}
 
+		// Add Simulator and Unknown entries
+		deviceMenu.addItem(.separator())
+		deviceMenu.addItem(self.menuItem(device: DeviceDescription(identifier: "x86_64", colors: [])))
+		deviceMenu.addItem(self.menuItem(device: DeviceDescription(identifier: "UnknownDevice1,1", colors: [])))
+
 		self.devicePopup.menu = deviceMenu
 		self.devicePopup.select(selectedItem)
 
@@ -66,7 +71,7 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 		colorMenu.addItem(NSMenuItem(title: "Default", representedObject: nil))
 
 		if (device.colors.count > 0) {
-			colorMenu.addItem(NSMenuItem.separator())
+			colorMenu.addItem(.separator())
 			for color in device.colors {
 				let menuItem = NSMenuItem(title: color, representedObject: color)
 				menuItem.image = colorSwatch(forColorCode: color)
@@ -177,9 +182,6 @@ private extension IOSDeviceInfoDemoAppDelegate {
 
 			result.append(DeviceDescription(identifier: deviceIdentifier, colors: colors))
 		}
-
-		// Add Simulator item.
-		result.append(DeviceDescription(identifier: "x86_64", colors: []))
 
 		return result
 	}
