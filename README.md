@@ -16,6 +16,8 @@ JAAIOSDeviceInfoManager().icon(forDevice:"iPhone7,2" color:"e1ccb5") // NSImage?
 
 Also provided is UIDevice+JAAExtendedDeviceInfo, a category for extracting model identifiers and color codes on device. This has only been tested on iOS.
 
+![Screen shot of demo application](IOSDeviceInfoTest/screenshot.png)
+
 
 Copyright © 2013–2016 Jens Ayton
 
