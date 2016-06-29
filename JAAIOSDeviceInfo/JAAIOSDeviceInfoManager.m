@@ -107,6 +107,9 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 	if (image == nil)
 	{
 		image = [self lookupIconForDevice:deviceIdentifier color:colorCode];
+		if (isSimulator) {
+			image = [self badgeIconWithSimulatorIcon:image];
+		}
 		if (image != nil)  [self.iconCache setObject:image forKey:cacheKey];
 	}
 
@@ -124,6 +127,20 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 
 	NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:colorCode];
 	return [NSWorkspace.sharedWorkspace iconForFileType:UTI];
+}
+
+
+- (NSImage *)badgeIconWithSimulatorIcon:(NSImage *)baseIcon
+{
+	NSImage *simulatorIcon = [self iconForSimulator];
+
+	return [NSImage imageWithSize:baseIcon.size flipped:NO drawingHandler:^(NSRect rect) {
+		[baseIcon drawInRect:rect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
+		NSRect badgeRect = { .origin = { rect.origin.x + rect.size.width / 20, rect.origin.y + rect.size.height / 20 },
+							 .size = { rect.size.width / 2.5, rect.size.height / 2.5 }};
+		[simulatorIcon drawInRect:badgeRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
+		return YES;
+	}];
 }
 
 
