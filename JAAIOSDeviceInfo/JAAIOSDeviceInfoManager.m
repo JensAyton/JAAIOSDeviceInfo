@@ -92,16 +92,18 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 	if (deviceIdentifier == nil)  return nil;
 	if (colorCode.length == 0)  colorCode = nil;
 
+	NSString *fullDeviceIdentifier = deviceIdentifier;
+	BOOL isSimulator;
+	NormalizeIdentifier(fullDeviceIdentifier, &deviceIdentifier, &isSimulator);
+
 	if (colorCode == nil && [deviceIdentifier isEqualToString:@"Watch1,1"])
 	{
 		// The default icon for the 38mm watch is actually a gold 42mm watch. This overrides it to a steel 38mm watch.
 		colorCode = @"5";
 	}
 
-	NSString *cacheKey = [NSString stringWithFormat:@"%@:%@", deviceIdentifier, colorCode];
+	NSString *cacheKey = [NSString stringWithFormat:@"%@:%@", fullDeviceIdentifier, colorCode];
 
-	BOOL isSimulator;
-	NormalizeIdentifier(deviceIdentifier, &deviceIdentifier, &isSimulator);
 
 	NSImage *image = [self.iconCache objectForKey:cacheKey];
 	if (image == nil)
