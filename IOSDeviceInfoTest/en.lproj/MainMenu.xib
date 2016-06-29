@@ -650,19 +650,12 @@
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="480" height="360"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1366" height="768"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="200" height="100"/>
             <view key="contentView" id="372">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
                 <autoresizingMask key="autoresizingMask"/>
-                <userGuides>
-                    <userLayoutGuide location="81" affinity="minX"/>
-                </userGuides>
                 <subviews>
-                    <imageView translatesAutoresizingMaskIntoConstraints="NO" id="548">
-                        <rect key="frame" x="20" y="20" width="440" height="235"/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="549"/>
-                    </imageView>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="579">
                         <rect key="frame" x="79" y="263" width="383" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" placeholderString="Unknown device" id="580">
@@ -728,10 +721,30 @@
                             <action selector="simulatorCheckboxSelectedWithSender:" target="494" id="fWI-Yu-afR"/>
                         </connections>
                     </button>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JkG-9j-zbW">
+                        <rect key="frame" x="48" y="239" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="KY3-b4-jjH"/>
+                            <constraint firstAttribute="width" constant="16" id="x8w-hB-9Qa"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="lcl-2a-p0H"/>
+                    </imageView>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8iT-Rd-qtZ">
+                        <rect key="frame" x="32" y="199" width="32" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="32" id="8Xw-C0-02A"/>
+                            <constraint firstAttribute="height" constant="32" id="dUq-Xr-pB9"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="EsK-e7-O6h"/>
+                    </imageView>
+                    <imageView translatesAutoresizingMaskIntoConstraints="NO" id="548">
+                        <rect key="frame" x="72" y="20" width="388" height="235"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="549"/>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="548" secondAttribute="trailing" constant="20" symbolic="YES" id="563"/>
-                    <constraint firstItem="548" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="565"/>
+                    <constraint firstItem="548" firstAttribute="leading" secondItem="372" secondAttribute="leading" constant="72" id="565"/>
                     <constraint firstAttribute="bottom" secondItem="548" secondAttribute="bottom" constant="20" symbolic="YES" id="571"/>
                     <constraint firstItem="594" firstAttribute="top" secondItem="372" secondAttribute="top" constant="20" symbolic="YES" id="600"/>
                     <constraint firstItem="613" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="372" secondAttribute="leading" constant="20" symbolic="YES" id="617"/>
@@ -753,7 +766,12 @@
                     <constraint firstItem="634" firstAttribute="baseline" secondItem="635" secondAttribute="baseline" id="687"/>
                     <constraint firstItem="634" firstAttribute="width" secondItem="594" secondAttribute="width" priority="500" id="0Bu-Du-fAq"/>
                     <constraint firstAttribute="trailing" secondItem="tbS-j9-va7" secondAttribute="trailing" constant="20" id="0WK-eT-iPv"/>
+                    <constraint firstItem="548" firstAttribute="leading" secondItem="JkG-9j-zbW" secondAttribute="trailing" constant="8" id="1ys-aq-nIP"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="8iT-Rd-qtZ" secondAttribute="bottom" constant="20" symbolic="YES" id="2zL-A4-z1f"/>
+                    <constraint firstItem="548" firstAttribute="top" secondItem="JkG-9j-zbW" secondAttribute="top" id="DDK-DM-pjO"/>
                     <constraint firstItem="tbS-j9-va7" firstAttribute="leading" secondItem="594" secondAttribute="trailing" constant="8" id="EBk-do-toe"/>
+                    <constraint firstItem="8iT-Rd-qtZ" firstAttribute="top" secondItem="JkG-9j-zbW" secondAttribute="bottom" constant="8" id="FKT-27-9EW"/>
+                    <constraint firstItem="8iT-Rd-qtZ" firstAttribute="trailing" secondItem="JkG-9j-zbW" secondAttribute="trailing" id="kFw-9R-Zc2"/>
                     <constraint firstItem="tbS-j9-va7" firstAttribute="baseline" secondItem="594" secondAttribute="baseline" id="oBN-pS-WWH"/>
                     <constraint firstItem="634" firstAttribute="leading" secondItem="594" secondAttribute="leading" id="znk-2E-6gE"/>
                 </constraints>
@@ -764,6 +782,8 @@
                 <outlet property="colorPopup" destination="634" id="692"/>
                 <outlet property="deviceIdentifierField" destination="579" id="607"/>
                 <outlet property="devicePopup" destination="594" id="604"/>
+                <outlet property="icon16ptImageView" destination="JkG-9j-zbW" id="em4-Sc-BZm"/>
+                <outlet property="icon32ptImageView" destination="8iT-Rd-qtZ" id="xQy-MF-1T0"/>
                 <outlet property="iconImageView" destination="548" id="570"/>
                 <outlet property="window" destination="371" id="532"/>
             </connections>

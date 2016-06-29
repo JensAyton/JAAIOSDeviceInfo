@@ -26,6 +26,8 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 	@IBOutlet var colorPopup: NSPopUpButton!
 	@IBOutlet var deviceIdentifierField: NSTextField!
 	@IBOutlet var iconImageView: NSImageView!
+	@IBOutlet var icon16ptImageView: NSImageView!
+	@IBOutlet var icon32ptImageView: NSImageView!
 
 	private let infoManager = JAAIOSDeviceInfoManager()
 	private var useSimulatorIdentifier = false
@@ -102,7 +104,10 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 		}
 		let color = self.colorPopup.selectedItem?.representedObject as? String
 
-		self.iconImageView.objectValue = self.infoManager.icon(forDevice: deviceIdentifier, color: color)
+		let icon = self.infoManager.icon(forDevice: deviceIdentifier, color: color)
+		self.iconImageView.objectValue = icon
+		self.icon16ptImageView.objectValue = icon
+		self.icon32ptImageView.objectValue = icon
 
 		let shortName = self.infoManager.shortName(forDevice: deviceIdentifier)
 		self.deviceIdentifierField.objectValue = "\(shortName) (\(deviceIdentifier))"
