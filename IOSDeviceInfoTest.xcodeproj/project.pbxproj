@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A227D1B1D23C98200A1B58D /* ColorSwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A227D1A1D23C98200A1B58D /* ColorSwatch.swift */; };
 		1AEFC4E61D1C99C800BF7A71 /* IOSDeviceInfoDemoAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFC4E51D1C99C800BF7A71 /* IOSDeviceInfoDemoAppDelegate.swift */; };
 		2D5CF0F617A051B30044E4A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D5CF0F517A051B30044E4A4 /* Cocoa.framework */; };
 		2D5CF10017A051B30044E4A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2D5CF0FE17A051B30044E4A4 /* InfoPlist.strings */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A227D1A1D23C98200A1B58D /* ColorSwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSwatch.swift; sourceTree = "<group>"; };
 		1AEFC4E41D1C99C600BF7A71 /* IOSDeviceInfoTest-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IOSDeviceInfoTest-Bridging-Header.h"; sourceTree = "<group>"; };
 		1AEFC4E51D1C99C800BF7A71 /* IOSDeviceInfoDemoAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOSDeviceInfoDemoAppDelegate.swift; sourceTree = "<group>"; };
 		2D5CF0F217A051B30044E4A4 /* IOSDeviceInfoTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOSDeviceInfoTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				1AEFC4E51D1C99C800BF7A71 /* IOSDeviceInfoDemoAppDelegate.swift */,
+				1A227D1A1D23C98200A1B58D /* ColorSwatch.swift */,
 				1AEFC4E41D1C99C600BF7A71 /* IOSDeviceInfoTest-Bridging-Header.h */,
 				2D5CF10A17A051B30044E4A4 /* MainMenu.xib */,
 				2D5CF0FC17A051B30044E4A4 /* Supporting Files */,
@@ -184,6 +187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D5CF10217A051B30044E4A4 /* main.m in Sources */,
+				1A227D1B1D23C98200A1B58D /* ColorSwatch.swift in Sources */,
 				1AEFC4E61D1C99C800BF7A71 /* IOSDeviceInfoDemoAppDelegate.swift in Sources */,
 				2D5CF11617A051EC0044E4A4 /* JAAIOSDeviceInfoManager.m in Sources */,
 			);

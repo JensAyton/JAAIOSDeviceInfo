@@ -68,7 +68,9 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 		if (device.colors.count > 0) {
 			colorMenu.addItem(NSMenuItem.separator())
 			for color in device.colors {
-				colorMenu.addItem(NSMenuItem(title: color, representedObject: color))
+				let menuItem = NSMenuItem(title: color, representedObject: color)
+				menuItem.image = colorSwatch(forColorCode: color)
+				colorMenu.addItem(menuItem)
 			}
 			self.colorPopup.isEnabled = true
 		} else {
