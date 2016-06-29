@@ -7,11 +7,11 @@ This is a class which allows you to map a device model identifier, like "iPad2,4
 
 Usage example:
 ```swift
-JAAIOSDeviceInfoManager().icon(forDevice:"iPhone7,2" color:"e1ccb5") // NSImage?
+JAAIOSDeviceInfoManager().icon(forDevice:"iPod7,1" color:"#c6353f") // NSImage?
 ```
 
 ```objc
-[[JAAIOSDeviceInfoManager new] iconForDevice:@"iPhone7,2" color:@"e1ccb5"];
+[[JAAIOSDeviceInfoManager new] iconForDevice:@"iPod7,1" color:@"#c6353f"];
 ```
 
 Also provided is UIDevice+JAAExtendedDeviceInfo, a category for extracting model identifiers and color codes on device. This has only been tested on iOS.
