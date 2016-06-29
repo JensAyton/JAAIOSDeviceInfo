@@ -106,9 +106,14 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 	NSImage *image = [self.iconCache objectForKey:cacheKey];
 	if (image == nil)
 	{
-		image = [self lookupIconForDevice:deviceIdentifier color:colorCode];
-		if (isSimulator) {
-			image = [self badgeIconWithSimulatorIcon:image];
+		if ([self identifierIsUnspecificSimulator:deviceIdentifier]) {
+			image = self.iconForSimulator;
+		}
+		else {
+			image = [self lookupIconForDevice:deviceIdentifier color:colorCode];
+			if (isSimulator) {
+				image = [self badgeIconWithSimulatorIcon:image];
+			}
 		}
 		if (image != nil)  [self.iconCache setObject:image forKey:cacheKey];
 	}
@@ -122,8 +127,6 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 - (NSImage *)lookupIconForDevice:(NSString *)deviceIdentifier color:(NSString *)colorCode
 {
 	NSParameterAssert(deviceIdentifier != nil);
-
-	if ([self identifierIsUnspecificSimulator:deviceIdentifier])  return self.iconForSimulator;
 
 	NSString *UTI = [self selectUTIForDevice:deviceIdentifier color:colorCode];
 	if (UTI == nil)  return nil;
