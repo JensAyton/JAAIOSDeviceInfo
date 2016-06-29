@@ -45,10 +45,11 @@ static NSString *GetModelIdentifier(void)
 - (NSString *)jaa_deviceColor
 {
 #if JAAEXTENDEDDEVICEINFO_USE_PRIVATE_API
-	return [self _deviceInfoForKey:@"DeviceColor"];
-#else
-	return nil;
+	if ([self respondsToSelector:@selector(_deviceInfoForKey:)]) {
+		return [self _deviceInfoForKey:@"DeviceColor"];
+	}
 #endif
+	return nil;
 }
 
 @end
