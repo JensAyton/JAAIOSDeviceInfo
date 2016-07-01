@@ -104,7 +104,6 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 
 	NSString *cacheKey = [NSString stringWithFormat:@"%@:%@", fullDeviceIdentifier, colorCode];
 
-
 	NSImage *image = [self.iconCache objectForKey:cacheKey];
 	if (image == nil)
 	{
@@ -113,9 +112,7 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 		}
 		else {
 			image = [self lookupIconForDevice:deviceIdentifier color:colorCode];
-			if (isSimulator) {
-				image = [self badgeIconWithSimulatorIcon:image];
-			}
+			if (isSimulator)  image = [self badgeIconWithSimulatorIcon:image];
 		}
 		if (image != nil)  [self.iconCache setObject:image forKey:cacheKey];
 	}
@@ -172,23 +169,14 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 	}
 
 	CFStringRef result = UTTypeCreatePreferredIdentifierForTag(CFSTR("com.apple.device-model-code"),
-	                                                           deviceIdentifierCF, nil);
+	                                                           deviceIdentifierCF,
+															   nil);
 	if (UTTypeIsDynamic(result)) {
 		CFRelease(result);
 		return nil;
 	} else {
 		return CFBridgingRelease(result);
 	}
-}
-
-
-- (NSArray<NSString *> *)allUTIsForDeviceIdentifier:(NSString *)deviceIdentifier
-{
-	CFStringRef deviceIdentifierCF = (__bridge CFStringRef)deviceIdentifier;
-	CFArrayRef allIdentifiers = UTTypeCreateAllIdentifiersForTag(CFSTR("com.apple.device-model-code"),
-	                                                             deviceIdentifierCF,
-	                                                             CFSTR("public.device"));
-	return CFBridgingRelease(allIdentifiers);
 }
 
 
