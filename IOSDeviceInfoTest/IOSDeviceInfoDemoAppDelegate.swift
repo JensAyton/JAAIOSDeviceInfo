@@ -37,8 +37,7 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 		var selectedItem: NSMenuItem? = nil
 
 		for device in self.knownDevicesOrFail() {
-			let item = self.menuItem(device: device)
-			deviceMenu.addItem(item)
+			let item = self.addDeviceMenuItem(device: device, menu: deviceMenu)
 			if device.identifier == "iPhone1,1" {
 				selectedItem = item
 			}
@@ -46,13 +45,26 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 
 		// Add Simulator and Unknown entries
 		deviceMenu.addItem(.separator())
-		deviceMenu.addItem(self.menuItem(device: DeviceDescription(identifier: "x86_64", colors: [])))
-		deviceMenu.addItem(self.menuItem(device: DeviceDescription(identifier: "UnknownDevice1,1", colors: [])))
+		self.addDeviceMenuItem(device: DeviceDescription(identifier: "x86_64", colors: []), menu: deviceMenu)
+		self.addDeviceMenuItem(device: DeviceDescription(identifier: "UnknownDevice1,1", colors: []), menu: deviceMenu)
 
 		self.devicePopup.menu = deviceMenu
 		self.devicePopup.select(selectedItem)
 
 		self.deviceSelected(nil)
+	}
+
+	@discardableResult private func addDeviceMenuItem(device: DeviceDescription, menu: NSMenu) -> NSMenuItem {
+		let item = self.menuItem(device: device)
+		menu.addItem(item)
+
+		let altItem = item.copy() as! NSMenuItem
+		altItem.title = device.identifier
+		altItem.isAlternate = true
+		altItem.keyEquivalentModifierMask = .option;
+		menu.addItem(altItem)
+
+		return item
 	}
 
 	private func menuItem(device: DeviceDescription) -> NSMenuItem {
