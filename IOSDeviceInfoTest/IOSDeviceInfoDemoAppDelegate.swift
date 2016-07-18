@@ -235,7 +235,7 @@ private extension IOSDeviceInfoDemoAppDelegate {
 		}
 
 		let longestCommonPrefix = identifiers.reduce(identifiers[0]) {
-			$0.commonPrefix(with: $1, options: [.literalSearch])
+			$0.commonPrefix(with: $1, options: [.literal])
 		}
 		let prefixLength = (longestCommonPrefix as NSString).length
 		return identifiers.map {
