@@ -87,7 +87,7 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 		if (device.colors.count > 0) {
 			colorMenu.addItem(.separator())
 			for color in device.colors {
-				let menuItem = NSMenuItem(title: color, representedObject: color)
+				let menuItem = NSMenuItem(title: color, representedObject: color as AnyObject)
 				menuItem.image = colorSwatch(forColorCode: color)
 				colorMenu.addItem(menuItem)
 			}
