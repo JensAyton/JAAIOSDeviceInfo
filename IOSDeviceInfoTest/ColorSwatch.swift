@@ -37,7 +37,7 @@ func color(forColorCode colorCode: String) -> NSColor? {
 			}
 	}
 
-	let hexits = code.characters.map {
+	let hexits = code.map {
 		strtoul(String($0), nil, 16)
 	}
 	guard hexits.count == 6 else { return nil }

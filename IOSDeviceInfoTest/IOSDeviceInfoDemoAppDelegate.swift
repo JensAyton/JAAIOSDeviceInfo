@@ -104,7 +104,7 @@ class IOSDeviceInfoDemoAppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	@IBAction func simulatorCheckboxSelected(sender: NSButton!) {
-		self.useSimulatorIdentifier = sender.state == 1;
+		self.useSimulatorIdentifier = sender.state == .on;
 		self.update()
 	}
 
@@ -157,8 +157,8 @@ private extension IOSDeviceInfoDemoAppDelegate {
 		do {
 			return try self.knownDevices()
 		} catch let error as NSError {
-			NSApplication.shared().presentError(error)
-			NSApplication.shared().terminate(nil)
+			NSApplication.shared.presentError(error)
+			NSApplication.shared.terminate(nil)
 			abort()
 		}
 	}
