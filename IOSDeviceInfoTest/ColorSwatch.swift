@@ -28,7 +28,6 @@ func color(forColorCode colorCode: String) -> NSColor? {
 		case "yellow": code = "faf189"
 		case "pink": code = "fe767a"
 		case "silver": code = "f5f4f7"
-		case "slate": code = "3b3b3c"
 		case "sparrow": code = "3b3b3c"
 
 		default:

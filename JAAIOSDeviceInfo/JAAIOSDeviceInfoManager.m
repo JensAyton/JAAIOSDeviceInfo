@@ -33,7 +33,7 @@ static void NormalizeIdentifier(NSString *deviceIdentifier, NSString **normalize
 			[self findIOSSimulator];
 		});
 		dispatch_group_notify(_findSimulatorWorkGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-			_findSimulatorWorkGroup = nil;
+			self->_findSimulatorWorkGroup = nil;
 		});
 
 		_iconCache = [NSCache new];
