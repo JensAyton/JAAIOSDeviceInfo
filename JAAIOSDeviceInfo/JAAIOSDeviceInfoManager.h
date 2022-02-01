@@ -6,8 +6,8 @@ NS_ASSUME_NONNULL_BEGIN
  * A class for extracting iOS/watchOS/tvOS device information from the Launch
  * Services UTI database.
  *
- * Since this relies on undocumentated data sources, it should not be relied
- * on in production, but it's quite useful for making debugging tools prettier.
+ * Since this relies on undocumented data sources, it should not be relied on
+ * in production, but it's quite useful for making debugging tools prettier.
  *
  * Since the information comes from the system, users with out-of-date systems
  * will not be able to retrieve information for newer devices.
@@ -29,8 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
  * instance, referring to the third-generation iPad as "iPad 3" rather than
  * "iPad", and adding generation number to iPad touch models).
  *
- * @param deviceIdentifier An Apple model identifer, such as iPod5,1. This can
- *        be retrieved on device using sysctlbyname("hw.machine", ...).
+ * @param deviceIdentifier An Apple model identifier, such as iPod5,1. This
+ *        can be retrieved on device using sysctlbyname("hw.machine", ...)
+ *        or uname().
  * @return A descriptive name for the device. If the device is unknown, the
  *         deviceIdentifier parameter is returned.
  *         (Failure can be detected using pointer equality.)
@@ -44,9 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Like nameForDevice:, but with the model numbers and cellular connection
  * details stripped out (in most cases algorithmically).
  *
- * @param deviceIdentifier An Apple model identifer, such as iPod5,1. This can
- *        be retrieved on device using sysctlbyname("hw.machine", ...) or
- *        uname().
+ * @param deviceIdentifier An Apple model identifier, such as iPod5,1. This
+ *        can be retrieved on device using sysctlbyname("hw.machine", ...)
+ *        or uname().
  * @return A short name for the device. If the device is unknown, the
  *         deviceIdentifier parameter is returned.
  *         (Failure can be detected using pointer equality.)
@@ -57,9 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
  * Given a device identifier string (such as "iPhone2,1"), returns an icon for
  * the device.
  *
- * @param deviceIdentifier An Apple model identifer, such as iPod5,1. This can
- *        be retrieved on device using sysctlbyname("hw.machine", ...) or
- *        uname().
+ * @param deviceIdentifier An Apple model identifier, such as iPod5,1. This
+ *        can be retrieved on device using sysctlbyname("hw.machine", ...)
+ *        or uname().
  * @param color An optional colour identifier, such as "black" or "white".
  *        This can be retrieved with the private UIDevice method
  *        _deviceInfoForKey:@"DeviceColor".
